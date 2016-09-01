@@ -32,6 +32,26 @@ public class Address {
             throw new IllegalValueException(MESSAGE_ADDRESS_CONSTRAINTS);
         }
         this.value = address;
+        this.decodeAddress(address);
+    }
+    
+    /**
+     * 
+     * @param address
+     */
+    private void decodeAddress(String address) {
+    	// credit use of split to user872858 at http://stackoverflow.com/questions/10631715/how-to-split-a-comma-separated-string
+    	String[] addressElements = address.split("\\s*,\\s*");
+    	
+    	Block newBlock = new Block(addressElements[0]);
+    	Street newStreet = new Street(addressElements[1]);
+    	Unit newUnit = new Unit(addressElements[2]);
+    	PostalCode newPostalCode = new PostalCode(addressElements[3]);
+    	
+    	this.setBlock(newBlock);
+    	this.setStreet(newStreet);
+    	this.setUnit(newUnit);
+    	this.setPostalCode(newPostalCode);
     }
 
     /**
