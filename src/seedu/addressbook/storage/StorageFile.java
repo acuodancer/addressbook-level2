@@ -116,6 +116,39 @@ public class StorageFile {
 		}
 		
 	}
+	
+	/**
+	 * Loads data from this storage file.
+	 * Create empty file if not found. Only used
+	 * at the start of the program
+	 */
+	public AddressBook preLoad() throws StorageOperationException {
+        try (final Reader fileReader =
+                     new BufferedReader(new FileReader(path.toFile()))) {
+
+            final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
+            final AdaptedAddressBook loaded = (AdaptedAddressBook) unmarshaller.unmarshal(fileReader);
+            // manual check for missing elements
+            if (loaded.isAnyRequiredFieldMissing()) {
+                throw new StorageOperationException("File data missing some elements");
+            }
+            return loaded.toModelType();
+
+        // create empty file if not found
+        } catch (FileNotFoundException fnfe) {
+            final AddressBook empty = new AddressBook();
+            save(empty);
+            return empty;
+
+        // other errors
+        } catch (IOException ioe) {
+            throw new StorageOperationException("Error writing to file: " + path);
+        } catch (JAXBException jaxbe) {
+            throw new StorageOperationException("Error parsing file data format");
+        } catch (IllegalValueException ive) {
+            throw new StorageOperationException("File contains illegal data values; data type constraints not met");
+        }
+    }
 
 	/**
 	 * Loads data from this storage file.
