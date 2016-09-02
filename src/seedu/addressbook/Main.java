@@ -54,7 +54,7 @@ public class Main {
         try {
             this.ui = new TextUi();
             this.storage = initializeStorage(launchArgs);
-            this.addressBook = storage.load();
+            this.addressBook = storage.preLoad();
             ui.showWelcomeMessage(VERSION, storage.getPath());
 
         } catch (InvalidStorageFilePathException | StorageOperationException e) {
