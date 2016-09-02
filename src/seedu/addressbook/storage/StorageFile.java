@@ -82,12 +82,25 @@ public class StorageFile {
 		return filePath.toString().endsWith(".txt");
 	}
 	
-	private static boolean isFileExist(String filePath) throws FileNotFoundException {
+	private static boolean isFileExist(String filePath) {
 		File f = new File(filePath);
 		if(f.exists() && !f.isDirectory()) { 
 		    return true;
 		} else {
 			return false;
+		}
+	}
+	
+	/**
+	 * @throws StorageOperationException 
+	 * 
+	 */
+	public void createNewFile() throws StorageOperationException {
+		final AddressBook empty = new AddressBook();
+		try {
+			Writer fileWriter = new BufferedWriter(new FileWriter(path.toFile()));
+		} catch (IOException e) {
+			throw new StorageOperationException("Error writing to file: " + path);
 		}
 	}
 
@@ -97,13 +110,16 @@ public class StorageFile {
 	 * @throws StorageOperationException
 	 *             if there were errors converting and/or storing data to file.
 	 */
-	public void save(AddressBook addressBook) throws StorageOperationException {
+	public void save(AddressBook addressBook) throws StorageOperationException, StorageUnavailableException {
 
 		/*
 		 * Note: Note the 'try with resource' statement below. More info:
 		 * https://docs.oracle.com/javase/tutorial/essential/exceptions/
 		 * tryResourceClose.html
 		 */
+		if (!isFileExist(path.toString())) {
+			throw new StorageUnavailableException("File not found! Created a new file.");
+		}
 		try (final Writer fileWriter = new BufferedWriter(new FileWriter(path.toFile()))) {
 			final AdaptedAddressBook toSave = new AdaptedAddressBook(addressBook);
 			final Marshaller marshaller = jaxbContext.createMarshaller();
@@ -121,8 +137,9 @@ public class StorageFile {
 	 * Loads data from this storage file.
 	 * Create empty file if not found. Only used
 	 * at the start of the program
+	 * @throws StorageUnavailableException 
 	 */
-	public AddressBook preLoad() throws StorageOperationException {
+	public AddressBook load() throws StorageOperationException, StorageUnavailableException {
         try (final Reader fileReader =
                      new BufferedReader(new FileReader(path.toFile()))) {
 
@@ -136,10 +153,11 @@ public class StorageFile {
 
         // create empty file if not found
         } catch (FileNotFoundException fnfe) {
-            final AddressBook empty = new AddressBook();
+            /*final AddressBook empty = new AddressBook();
             save(empty);
             return empty;
-
+            */
+        	throw new StorageUnavailableException("File not found! Created anew file.");
         // other errors
         } catch (IOException ioe) {
             throw new StorageOperationException("Error writing to file: " + path);
@@ -157,37 +175,6 @@ public class StorageFile {
 	 *             if there were errors reading and/or converting data from
 	 *             file.
 	 */
-	public AddressBook load() throws StorageOperationException {
-		try (final Reader fileReader = new BufferedReader(new FileReader(path.toFile()))) {
-
-			final Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
-			final AdaptedAddressBook loaded = (AdaptedAddressBook) unmarshaller.unmarshal(fileReader);
-			// manual check for missing elements
-			if (loaded.isAnyRequiredFieldMissing()) {
-				throw new StorageOperationException("File data missing some elements");
-			}
-			return loaded.toModelType();
-
-			/*
-			 * Note: Here, we are using an exception to create the file if it is
-			 * missing. However, we should minimize using exceptions to
-			 * facilitate normal paths of execution. If we consider the missing
-			 * file as a 'normal' situation (i.e. not truly exceptional) we
-			 * should not use an exception to handle it.
-			 */
-
-			// create empty file if not found
-		} catch (FileNotFoundException fnfe) {
-			throw new StorageOperationException("File not found!");
-			// other errors
-		} catch (IOException ioe) {
-			throw new StorageOperationException("Error writing to file: " + path);
-		} catch (JAXBException jaxbe) {
-			throw new StorageOperationException("Error parsing file data format");
-		} catch (IllegalValueException ive) {
-			throw new StorageOperationException("File contains illegal data values; data type constraints not met");
-		}
-	}
 
 	public String getPath() {
 		return path.toString();

@@ -33,6 +33,7 @@ public class Main {
     private List<? extends ReadOnlyPerson> lastShownList = Collections.emptyList();
 
 
+
     public static void main(String... launchArgs) {
         new Main().run(launchArgs);
     }
@@ -54,7 +55,7 @@ public class Main {
         try {
             this.ui = new TextUi();
             this.storage = initializeStorage(launchArgs);
-            this.addressBook = storage.preLoad();
+            this.addressBook = storage.load();
             ui.showWelcomeMessage(VERSION, storage.getPath());
 
         } catch (InvalidStorageFilePathException | StorageOperationException e) {
@@ -69,7 +70,9 @@ public class Main {
              * =======================================================================================================
              */
             throw new RuntimeException(e);
-        }
+        } catch (StorageUnavailableException e) {
+        	ui.showToUser(e.getMessage() + ". Creating new File.");
+		}
     }
 
     /** Prints the Goodbye message and exits. */
@@ -111,6 +114,22 @@ public class Main {
             CommandResult result = command.execute();
             storage.save(addressBook);
             return result;
+        } catch (StorageUnavailableException e) {
+        	ui.showToUser(e.getMessage());
+            try {
+				this.storage.createNewFile();
+				AddressBook empty = new AddressBook();
+				command.setData(addressBook, lastShownList);
+	            CommandResult result = command.execute();
+	            storage.save(empty);
+	            return result;
+			} catch (StorageOperationException e1) {
+				ui.showToUser(e.getMessage());
+				throw new RuntimeException(e);
+			} catch (StorageUnavailableException e1) {
+				ui.showToUser(e.getMessage());
+				throw new RuntimeException(e);
+			}
         } catch (Exception e) {
             ui.showToUser(e.getMessage());
             throw new RuntimeException(e);
