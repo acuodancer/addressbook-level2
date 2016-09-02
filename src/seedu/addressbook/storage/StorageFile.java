@@ -87,7 +87,7 @@ public class StorageFile {
 		if(f.exists() && !f.isDirectory()) { 
 		    return true;
 		} else {
-			throw new FileNotFoundException("File not found!");
+			return false;
 		}
 	}
 
