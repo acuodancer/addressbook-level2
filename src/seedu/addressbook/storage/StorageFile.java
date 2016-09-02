@@ -81,6 +81,15 @@ public class StorageFile {
 	private static boolean isValidPath(Path filePath) {
 		return filePath.toString().endsWith(".txt");
 	}
+	
+	private static boolean isFileExist(String filePath) throws FileNotFoundException {
+		File f = new File(filePath);
+		if(f.exists() && !f.isDirectory()) { 
+		    return true;
+		} else {
+			throw new FileNotFoundException("File not found!");
+		}
+	}
 
 	/**
 	 * Saves all data to this storage file.
@@ -96,14 +105,10 @@ public class StorageFile {
 		 * tryResourceClose.html
 		 */
 		try (final Writer fileWriter = new BufferedWriter(new FileWriter(path.toFile()))) {
-
 			final AdaptedAddressBook toSave = new AdaptedAddressBook(addressBook);
 			final Marshaller marshaller = jaxbContext.createMarshaller();
 			marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-			marshaller.marshal(toSave, fileWriter);
-			
-		} catch (FileNotFoundException fnfe) {
-			throw new StorageOperationException(path + ": File not found!");
+			marshaller.marshal(toSave, fileWriter);	
 		} catch (IOException ioe) {
 			throw new StorageOperationException("Error writing to file: " + path);
 		} catch (JAXBException jaxbe) {
@@ -140,7 +145,7 @@ public class StorageFile {
 
 			// create empty file if not found
 		} catch (FileNotFoundException fnfe) {
-			throw new StorageOperationException(path + ": File not found!");
+			throw new StorageOperationException("File not found!");
 			// other errors
 		} catch (IOException ioe) {
 			throw new StorageOperationException("Error writing to file: " + path);
