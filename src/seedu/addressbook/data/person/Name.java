@@ -63,7 +63,7 @@ public class Name implements Printable{
 
 	@Override
 	public String getPrintableString() {
-		String printable = "Name :" + this.fullName;
+		String printable = "Name: " + this.fullName;
 		return printable;
 	}
 

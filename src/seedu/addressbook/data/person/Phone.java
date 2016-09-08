@@ -59,7 +59,7 @@ public class Phone implements Printable {
 
 	@Override
 	public String getPrintableString() {
-		String printable = "Phone :" + this.value;
+		String printable = "Phone: " + this.value;
 		return printable;
 	}
 }
