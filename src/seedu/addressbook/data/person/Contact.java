@@ -8,7 +8,7 @@ public class Contact {
 		return testContact.matches(regex);
 	}
 	
-	public static void setRegex(String newRegex) {
+	public void setRegex(String newRegex) {
 		regex = newRegex;
 	}
 	
