@@ -22,7 +22,6 @@ public class Address extends Contact {
      */
     public Address(String address, boolean isPrivate) throws IllegalValueException {
         this.isPrivate = isPrivate;
-        this.setRegex(ADDRESS_VALIDATION_REGEX);
         if (!isValidAddress(address)) {
             throw new IllegalValueException(MESSAGE_ADDRESS_CONSTRAINTS);
         }
@@ -33,7 +32,7 @@ public class Address extends Contact {
      * Returns true if a given string is a valid person email.
      */
     public static boolean isValidAddress(String test) {
-        return test.matches(ADDRESS_VALIDATION_REGEX);
+        return isValid(test, ADDRESS_VALIDATION_REGEX);
     }
 
     @Override
