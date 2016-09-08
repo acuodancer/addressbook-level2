@@ -1,5 +1,7 @@
 package seedu.addressbook.data.tag;
 
+import seedu.addressbook.data.person.*;
+
 public class Tagging {
 	
 	private static final String ADD_PREFIX = "+";
@@ -8,35 +10,35 @@ public class Tagging {
 	private enum TagType {ADD, REMOVE};
 	
 	private TagType type;
-	private String name;
-	private String tag;
+	private Person person;
+	private Tag tag;
 	
-	public Tagging(boolean isAdd, String name, String tag) {
+	public Tagging(boolean isAdd, Person person, Tag tag) {
 		if (isAdd) {
 			type = TagType.ADD;
 		} else {
 			type = TagType.REMOVE;
 		}
-		this.name = name;
+		this.person = person;
 		this.tag = tag;
 	}
 	
 	public TagType getType() {
 		return type;
 	}
-	public String getName() {
-		return name;
+	public Person getPerson() {
+		return person;
 	}
-	public String getTag() {
+	public Tag getTag() {
 		return tag;
 	}
 	public void setType(TagType type) {
 		this.type = type;
 	}
-	public void setName(String name) {
-		this.name = name;
+	public void setName(Person person) {
+		this.person = person;
 	}
-	public void setTag(String tag) {
+	public void setTag(Tag tag) {
 		this.tag = tag;
 	}
 	
@@ -48,7 +50,7 @@ public class Tagging {
 		} else {
 			builder.append(REMOVE_PREFIX);
 		}
-		builder.append(" " + name + " [" + tag + "]");
+		builder.append(" " + person.getName() + " [" + tag.tagName + "]");
 		return builder.toString();
 	}
 }
