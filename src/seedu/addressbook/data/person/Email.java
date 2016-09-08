@@ -13,21 +13,16 @@ public class Email extends Contact {
             "Person emails should be 2 alphanumeric/period strings separated by '@'";
     public static final String EMAIL_VALIDATION_REGEX = "[\\w\\.]+@[\\w\\.]+";
 
-    public final String value;
-    private boolean isPrivate;
-
     /**
      * Validates given email.
      *
      * @throws IllegalValueException if given email address string is invalid.
      */
     public Email(String email, boolean isPrivate) throws IllegalValueException {
-        this.isPrivate = isPrivate;
-        email = email.trim();
+        super(email.trim(), isPrivate);
         if (!isValidEmail(email)) {
             throw new IllegalValueException(MESSAGE_EMAIL_CONSTRAINTS);
         }
-        this.value = email;
     }
 
     /**
@@ -54,8 +49,4 @@ public class Email extends Contact {
         return value.hashCode();
     }
 
-
-    public boolean isPrivate() {
-        return isPrivate;
-    }
 }
