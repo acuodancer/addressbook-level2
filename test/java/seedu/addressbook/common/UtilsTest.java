@@ -36,7 +36,7 @@ public class UtilsTest {
 		ArrayList<Object> listToTest = generateListWithNull();
 		Object[] arrayToTest = new Object[listToTest.size()];
 		arrayToTest = listToTest.toArray();
-		assertEquals(true, Utils.isAnyNull(arrayToTest));
+		assertEquals(true, utils.isAnyNull(arrayToTest));
 	}	
 	
 	// List with duplicate but no null, return false
@@ -57,6 +57,33 @@ public class UtilsTest {
 		assertEquals(false, utils.isAnyNull(arrayToTest));
 	}	
 	
+	/**
+	 * Test elements are unique method
+	 */
+	
+	@Test
+	public void duplicate_emptyInput_returnsCorrect() {
+		ArrayList listToTest = generateEmptyList();
+		assertEquals(true, utils.elementsAreUnique(listToTest));
+	}
+	
+	@Test
+	public void duplicate_withNullInput_returnsCorrect() {
+		ArrayList<Object> listToTest = generateListWithNull();
+		assertEquals(true, utils.elementsAreUnique(listToTest));
+	}	
+	
+	@Test
+	public void duplicate_withDuplicateInput_returnsIncorrect() {
+		ArrayList<Object> listToTest = generateListWithDuplicate();
+		assertEquals(false, utils.elementsAreUnique(listToTest));
+	}	
+	
+	@Test
+	public void duplicate_noNullnoDuplicateInput_returnsCorrect() {
+		ArrayList<Object> listToTest = generateWithNoNullNoDuplicate();
+		assertEquals(true, utils.elementsAreUnique(listToTest));
+	}	
 	
 	private static ArrayList<Object> generateEmptyList() {
 		ArrayList<Object> emptyList = new ArrayList<Object>();
